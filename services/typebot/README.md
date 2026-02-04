@@ -88,6 +88,117 @@ SMTP_SECURE=false
 SMTP_FROM=noreply@yanis-harrat.com
 ```
 
+## Fonctionnalités Avancées
+
+Typebot supporte de nombreuses intégrations optionnelles. Toutes sont configurables via le fichier `.env`.
+
+### 🔐 Authentification Étendue
+
+En plus de GitHub, Google et GitLab, vous pouvez configurer :
+
+- **Facebook OAuth** : `FACEBOOK_CLIENT_ID` / `FACEBOOK_CLIENT_SECRET`
+- **Azure AD** : `AZURE_AD_CLIENT_ID` / `AZURE_AD_CLIENT_SECRET` / `AZURE_AD_TENANT_ID`
+- **Keycloak** : `KEYCLOAK_CLIENT_ID` / `KEYCLOAK_CLIENT_SECRET` / `KEYCLOAK_ISSUER`
+- **Custom OAuth** (OpenID Connect) : Support pour n'importe quel provider compatible
+
+### 🎨 Intégrations Média
+
+Ajoutez des médias riches à vos chatbots :
+
+- **Giphy** : GIFs animés (`GIPHY_API_KEY`)
+- **Unsplash** : Images haute qualité (`UNSPLASH_ACCESS_KEY`)
+- **Pexels** : Photos et vidéos (`PEXELS_API_KEY`)
+
+### 📊 Intégrations Tierces
+
+Connectez vos chatbots à vos outils :
+
+- **Google Sheets** : Lecture/écriture de données (`GOOGLE_SHEETS_CLIENT_ID/SECRET`)
+- **Gmail** : Envoi d'emails depuis les bots (`GMAIL_CLIENT_ID/SECRET`)
+- **WhatsApp Business** : Intégration WhatsApp Cloud API
+  ```bash
+  WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID=
+  WHATSAPP_PREVIEW_SYSTEM_USER_ACCESS_TOKEN=
+  WHATSAPP_CLOUD_API_URL=
+  ```
+
+### 📈 Analytics & Traductions
+
+- **PostHog** : Analytics produit et suivi utilisateur
+  ```bash
+  NEXT_PUBLIC_POSTHOG_KEY=votre_clé
+  NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+  ```
+- **Tolgee** : Gestion des traductions multilingues
+  ```bash
+  TOLGEE_API_KEY=votre_clé
+  TOLGEE_API_URL=https://app.tolgee.io
+  ```
+
+### ⚡ Redis (Optionnel)
+
+Redis permet le rate limiting et améliore les performances WhatsApp. Deux options :
+
+#### Option 1 : Redis Local (Recommandé)
+
+Décommentez le service Redis dans `docker-compose.yml` :
+```yaml
+typebot-redis:
+  image: redis:7-alpine
+  # ... (voir docker-compose.yml)
+```
+
+Puis configurez dans `.env` :
+```bash
+REDIS_URL=redis://typebot-redis:6379
+```
+
+#### Option 2 : Redis Externe
+
+Utilisez un service Redis externe (Upstash, Redis Cloud, etc.) :
+```bash
+REDIS_URL=redis://username:password@host:port
+```
+
+### 🎛️ Configuration Avancée
+
+```bash
+# Plan workspace par défaut (FREE/STARTER/PRO/LIFETIME/UNLIMITED)
+DEFAULT_WORKSPACE_PLAN=UNLIMITED
+
+# Limite taille d'upload en MB (défaut: 10)
+FILE_UPLOAD_MAX_SIZE_MB=50
+
+# Timeout API en millisecondes (défaut: 10000)
+CHAT_API_TIMEOUT=15000
+
+# Mode debug (logs détaillés)
+DEBUG=true
+```
+
+### 🪝 Webhooks Système
+
+Recevez des notifications sur des événements système :
+
+```bash
+# Webhook appelé à chaque création d'utilisateur
+CREATE_USER_WEBHOOK_URL=https://votre-webhook.com/user-created
+
+# Webhook pour messages importants
+IMPORTANT_MESSAGE_WEBHOOK_URL=https://votre-webhook.com/important
+
+# Token pour l'API admin
+ADMIN_API_TOKEN=votre_token_sécurisé
+```
+
+### 🎯 PartyKit (Webhooks Avancés)
+
+Pour des webhooks temps-réel avancés :
+```bash
+PARTYKIT_HOST=https://votre-partykit.com
+PARTYKIT_TOKEN=votre_token
+```
+
 ## Démarrage
 
 ### Méthode 1 : Avec le script global
@@ -133,8 +244,19 @@ Une fois démarré, accédez à :
 
 - **Builder (Construction)** : https://typebot.yanis-harrat.com
 - **Viewer (Exécution)** : https://bot.yanis-harrat.com
+- **Console MinIO S3** : https://s3.yanis-harrat.com (credentials dans `.env`)
 
 Lors de la première connexion, vous devrez vous authentifier avec le provider OAuth configuré.
+
+### Plan Administrateur
+
+L'email configuré dans `ADMIN_EMAIL` obtient **automatiquement** le plan `UNLIMITED` avec :
+- ✅ Bots illimités
+- ✅ Réponses illimitées
+- ✅ Stockage illimité
+- ✅ Toutes les fonctionnalités premium
+
+Les autres utilisateurs obtiennent le plan défini par `DEFAULT_WORKSPACE_PLAN`.
 
 ## Mise à jour
 
@@ -195,12 +317,32 @@ rm -rf data/db
 docker compose up -d
 ```
 
-## Données et volumes
+## Données et Volumes
 
-Les données persistantes sont stockées dans :
+Les données persistantes sont stockées dans des **volumes Docker nommés** :
 
-- `./data/db/` : Base de données PostgreSQL
-- `./data/s3/` : Fichiers uploadés (MinIO)
+- `typebot-db-data` : Base de données PostgreSQL
+- `typebot-s3-data` : Fichiers uploadés (MinIO)
+- `typebot-redis-data` : Cache Redis (si activé)
+
+### Gestion des volumes
+
+```bash
+# Lister les volumes
+docker volume ls | grep typebot
+
+# Inspecter un volume
+docker volume inspect typebot-db-data
+
+# Sauvegarder la base de données
+docker exec typebot-db pg_dump -U typebot typebot > backup-$(date +%Y%m%d).sql
+
+# Sauvegarder MinIO
+docker run --rm -v typebot-s3-data:/data -v $(pwd):/backup alpine tar czf /backup/s3-backup-$(date +%Y%m%d).tar.gz /data
+
+# Restaurer la base de données
+cat backup.sql | docker exec -i typebot-db psql -U typebot -d typebot
+```
 
 ## Sécurité
 
