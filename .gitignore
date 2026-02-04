@@ -2,7 +2,7 @@
 .env
 *.env
 gatway/.env
-
+.claude/settings.local.json
 # Dépendances
 node_modules/
 
