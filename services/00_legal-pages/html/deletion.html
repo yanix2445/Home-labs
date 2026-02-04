@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppression des Données - Black Rise</title>
+    <meta name="description" content="Instructions pour demander la suppression de vos données personnelles conformément au RGPD">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #fb41c7;
+            --text: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --text-dim: #707070;
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --surface-hover: #1a1a1a;
+            --border: #1f1f1f;
+            --code-bg: #161616;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+            font-size: 15px;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.01em;
+        }
+
+        .header {
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 10, 0.8);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            transition: color 0.2s;
+            letter-spacing: -0.01em;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 240px;
+            gap: 4rem;
+            padding: 3rem 2rem;
+        }
+
+        .content {
+            max-width: 900px;
+        }
+
+        .content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .meta {
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            margin-bottom: 3rem;
+        }
+
+        .content h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+            scroll-margin-top: 90px;
+        }
+
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.4;
+            letter-spacing: -0.01em;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content p {
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .content ul, .content ol {
+            margin: 1.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .content li {
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .content li strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .content a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .content a:hover {
+            opacity: 0.8;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        .note {
+            padding: 1.5rem;
+            margin: 2rem 0;
+            background: var(--code-bg);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 6px 6px 0;
+        }
+
+        .note p {
+            margin-bottom: 0.75rem;
+        }
+
+        .note p:last-child {
+            margin-bottom: 0;
+        }
+
+        .note ul {
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+
+        .toc-sidebar {
+            position: sticky;
+            top: 90px;
+            align-self: start;
+            padding: 1.5rem 0;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .toc-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .toc-title {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 1rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-list a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+            display: block;
+            line-height: 1.5;
+        }
+
+        .toc-list a:hover {
+            color: var(--primary);
+        }
+
+        .toc-list a.active {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 1rem;
+            }
+
+            .toc-sidebar {
+                display: none;
+            }
+
+            .content h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .nav {
+                gap: 1rem;
+            }
+
+            .nav a {
+                font-size: 0.875rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">B</div>
+                Black Rise
+            </a>
+            <nav class="nav">
+                <a href="/">Accueil</a>
+                <a href="/privacy.html">Confidentialité</a>
+                <a href="/terms.html">Conditions</a>
+                <a href="/deletion.html" class="active">Suppression</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main class="content">
+            <h1>Suppression des Données</h1>
+            <div class="meta">Dernière mise à jour : 5 février 2026</div>
+
+            <div class="note">
+                <p><strong>Droit RGPD :</strong> Conformément à l'article 17 du RGPD (Règlement Général sur la Protection des Données), vous avez le droit de demander la suppression de toutes vos données personnelles que nous détenons. Cette action est irréversible.</p>
+            </div>
+
+            <h2 id="introduction">Introduction</h2>
+            <p>Black Rise, entreprise mère (holding technologique multisectoriel) exploitée par Harrat Yanis, Mohamed-Amine (SIREN 919 266 668), respecte votre droit à l'effacement, également appelé "droit à l'oubli". Ce droit vous permet de demander la suppression complète de vos données personnelles de nos systèmes et de toutes nos branches d'activités. Cette page vous explique comment exercer ce droit et ce que cela implique.</p>
+            <p>Ce droit s'applique dans les cas suivants :</p>
+            <ul>
+                <li>Vos données ne sont plus nécessaires au regard des finalités pour lesquelles elles ont été collectées</li>
+                <li>Vous retirez votre consentement au traitement de vos données</li>
+                <li>Vous vous opposez au traitement de vos données</li>
+                <li>Vos données ont fait l'objet d'un traitement illicite</li>
+                <li>Vos données doivent être effacées pour respecter une obligation légale</li>
+            </ul>
+
+            <hr class="divider">
+
+            <h2 id="donnees">Quelles Données seront Supprimées ?</h2>
+            <p>La demande de suppression inclut l'effacement définitif de toutes vos données personnelles collectées à travers l'ensemble de nos secteurs d'activités. En tant qu'entreprise mère multisectorielle, nous collectons différents types de données selon les services utilisés :</p>
+
+            <h3>Données Générales (tous secteurs)</h3>
+            <ul>
+                <li><strong>Informations d'identification</strong> — Adresse email, nom complet, prénom, numéro de téléphone, adresse postale</li>
+                <li><strong>Données de communication</strong> — Numéro WhatsApp, historique des conversations, emails échangés, tickets de support</li>
+                <li><strong>Données de compte</strong> — Identifiants, mots de passe hashés, préférences, paramètres personnalisés, avatar/photo de profil</li>
+                <li><strong>Métadonnées techniques</strong> — Logs de connexion, adresses IP, historique de navigation, données de session (sauf logs de sécurité légaux)</li>
+            </ul>
+
+            <h3>Développement Web et Logiciel</h3>
+            <ul>
+                <li><strong>Données d'application</strong> — Toutes vos données stockées dans nos logiciels, applications web et services en ligne</li>
+                <li><strong>Historique d'interactions</strong> — Conversations avec nos chatbots, historique d'utilisation, workflows créés</li>
+                <li><strong>Contenus utilisateur</strong> — Documents, images, fichiers ou tout contenu que vous avez créé ou uploadé</li>
+                <li><strong>Données de bases de données</strong> — Toutes vos entrées dans nos bases de données applicatives</li>
+                <li><strong>Données API</strong> — Clés API, tokens d'accès, intégrations tierces configurées</li>
+            </ul>
+
+            <h3>Jeux Vidéo</h3>
+            <ul>
+                <li><strong>Profil de joueur</strong> — Pseudo, avatar, biographie, statistiques de jeu, niveaux atteints</li>
+                <li><strong>Progression de jeu</strong> — Sauvegardes, achievements/trophées, scores, classements</li>
+                <li><strong>Achats in-game</strong> — Historique d'achats, monnaie virtuelle, items possédés, inventaire</li>
+                <li><strong>Contenu généré</strong> — Niveaux créés, mods, personnalisations, captures d'écran, replays</li>
+                <li><strong>Données multijoueur</strong> — Amis, guildes/clans, messages in-game, interactions sociales</li>
+                <li><strong>Données de performance</strong> — Métriques de gameplay, comportement de jeu, télémétrie</li>
+            </ul>
+
+            <h3>Commerce Digital (E-commerce)</h3>
+            <ul>
+                <li><strong>Informations de facturation</strong> — Nom de facturation, adresse de facturation, informations fiscales</li>
+                <li><strong>Informations de livraison</strong> — Adresses de livraison, préférences de livraison, instructions spéciales</li>
+                <li><strong>Historique de commandes</strong> — Commandes passées, montants, produits achetés, dates de transactions</li>
+                <li><strong>Données de paiement</strong> — Moyens de paiement enregistrés (tokens sécurisés uniquement, jamais les numéros complets)</li>
+                <li><strong>Panier et wishlist</strong> — Produits en panier, listes de souhaits, produits favoris</li>
+                <li><strong>Avis et évaluations</strong> — Commentaires produits, notes, reviews laissées</li>
+                <li><strong>Programme de fidélité</strong> — Points de fidélité, récompenses, statut VIP, historique de réductions</li>
+            </ul>
+
+            <h3>Marketing Digital</h3>
+            <ul>
+                <li><strong>Préférences marketing</strong> — Consentements marketing, préférences de communication, sujets d'intérêt</li>
+                <li><strong>Données de tracking</strong> — Cookies, pixels de suivi, comportement de navigation, pages visitées</li>
+                <li><strong>Segmentation</strong> — Segments d'audience, profils comportementaux, données démographiques inférées</li>
+                <li><strong>Campagnes</strong> — Interactions avec emails, clics sur publicités, conversions, attribution</li>
+                <li><strong>Newsletters</strong> — Abonnements newsletters, historique d'ouverture et de clics</li>
+                <li><strong>Réseaux sociaux</strong> — Données collectées via social login, interactions sur réseaux sociaux</li>
+            </ul>
+
+            <h3>Production de Contenu</h3>
+            <ul>
+                <li><strong>Projets créatifs</strong> — Briefs, cahiers des charges, moodboards, inspirations partagées</li>
+                <li><strong>Contenus produits</strong> — Vidéos créées pour vous, photos, designs, fichiers sources (selon licence)</li>
+                <li><strong>Historique de révisions</strong> — Versions précédentes, feedbacks, validations, notes de production</li>
+                <li><strong>Droits et licences</strong> — Contrats de cession, accords de licence, autorisations d'utilisation</li>
+                <li><strong>Données de diffusion</strong> — Statistiques de performance du contenu, analytics, métriques d'engagement</li>
+            </ul>
+
+            <h3>Données Transversales</h3>
+            <ul>
+                <li><strong>Données contractuelles</strong> — Contrats signés, devis acceptés, bons de commande, factures</li>
+                <li><strong>Service client</strong> — Tickets de support, historique de conversations, réclamations, SAV</li>
+                <li><strong>Données analytiques</strong> — Comportement d'utilisation, préférences, habitudes, patterns d'activité</li>
+                <li><strong>Données de sécurité</strong> — Tentatives de connexion, alertes de sécurité, authentification à deux facteurs</li>
+            </ul>
+
+            <p><strong>Important :</strong> La suppression est globale et couvre toutes les branches d'activités de Black Rise et de ses entités opérationnelles potentielles. Cela inclut les données des services actuels et futurs que vous auriez pu utiliser.</p>
+
+            <hr class="divider">
+
+            <h2 id="consequences">Conséquences de la Suppression</h2>
+            <div class="note">
+                <p><strong>Attention :</strong> Cette action est définitive et irréversible. Une fois vos données supprimées, il sera impossible de les récupérer.</p>
+            </div>
+            <p>Après la suppression de vos données :</p>
+            <ul>
+                <li><strong>Perte d'accès</strong> — Vous ne pourrez plus vous connecter à votre compte ni accéder à nos services</li>
+                <li><strong>Fin des communications</strong> — Vous ne recevrez plus aucune notification, email ou message de notre part</li>
+                <li><strong>Historique effacé</strong> — Tout l'historique de vos interactions sera définitivement perdu</li>
+                <li><strong>Réinscription possible</strong> — Vous pourrez créer un nouveau compte ultérieurement, mais sans historique précédent</li>
+                <li><strong>Services partagés</strong> — Les contenus partagés publiquement ou avec d'autres utilisateurs seront supprimés ou anonymisés</li>
+            </ul>
+
+            <hr class="divider">
+
+            <h2 id="delai">Délai de Suppression</h2>
+            <p>Nous nous engageons à traiter votre demande dans les délais suivants :</p>
+            <ul>
+                <li><strong>Confirmation de réception</strong> — Sous 48 heures ouvrées</li>
+                <li><strong>Vérification d'identité</strong> — Sous 5 jours ouvrés (pour éviter les suppressions frauduleuses)</li>
+                <li><strong>Suppression effective</strong> — Maximum 30 jours calendaires après validation de votre identité</li>
+                <li><strong>Confirmation finale</strong> — Email de confirmation une fois la suppression terminée</li>
+            </ul>
+            <p>Les données sont supprimées de nos systèmes de production immédiatement, puis des sauvegardes dans les 30 jours maximum.</p>
+
+            <hr class="divider">
+
+            <h2 id="procedure">Instructions pour Demander la Suppression</h2>
+            <p><strong>Procédure étape par étape :</strong></p>
+            <ol>
+                <li>Envoyez un email à <a href="mailto:yanis.amine.harrat@gmail.com">yanis.amine.harrat@gmail.com</a></li>
+                <li>Utilisez l'objet : <strong>"Demande de suppression de données - RGPD"</strong></li>
+                <li>Incluez les informations suivantes dans votre email :
+                    <ul>
+                        <li>Votre nom complet</li>
+                        <li>Votre adresse email utilisée sur nos services</li>
+                        <li>Votre numéro WhatsApp (si vous avez utilisé ce service)</li>
+                        <li>La liste des services que vous avez utilisés :
+                            <ul style="margin-top: 0.5rem;">
+                                <li><strong>Développement</strong> — Applications web, chatbots, APIs, bases de données</li>
+                                <li><strong>Jeux vidéo</strong> — Comptes de joueur, achats in-game, profils</li>
+                                <li><strong>E-commerce</strong> — Commandes, comptes clients, abonnements</li>
+                                <li><strong>Marketing</strong> — Newsletters, campagnes, tracking, analytics</li>
+                                <li><strong>Contenu</strong> — Projets créatifs, productions vidéo, designs</li>
+                            </ul>
+                        </li>
+                        <li>Une preuve d'identité (si nécessaire pour vérification)</li>
+                    </ul>
+                </li>
+                <li>Vous recevrez une confirmation de réception sous 48 heures</li>
+                <li>Vérification d'identité : Nous pourrons vous demander de confirmer votre identité pour éviter les suppressions frauduleuses</li>
+                <li>Suppression effective : Vos données seront supprimées dans les 30 jours maximum</li>
+                <li>Confirmation finale : Vous recevrez un email confirmant que vos données ont été supprimées</li>
+            </ol>
+
+            <hr class="divider">
+
+            <h2 id="conservation">Données Conservées pour Obligations Légales</h2>
+            <p>Certaines données peuvent être conservées si requis par la loi française, même après votre demande de suppression :</p>
+            <ul>
+                <li><strong>Données de facturation</strong> — 10 ans (obligation fiscale française - Article L123-22 du Code de commerce)</li>
+                <li><strong>Logs de sécurité</strong> — 12 mois maximum (prévention de la fraude et sécurité des systèmes)</li>
+                <li><strong>Données contractuelles</strong> — Durée de prescription légale (5 ans) si nécessaire pour défendre nos droits</li>
+                <li><strong>Archives légales</strong> — Données anonymisées pour conformité réglementaire</li>
+            </ul>
+            <p>Ces données sont conservées dans un environnement sécurisé avec accès restreint et seront supprimées dès la fin des périodes légales de conservation.</p>
+
+            <hr class="divider">
+
+            <h2 id="contact">Contact et Support</h2>
+            <p>Pour toute demande de suppression ou question :</p>
+            <ul>
+                <li><strong>Responsable</strong> — Black Rise (Harrat Yanis, Mohamed-Amine)</li>
+                <li><strong>Adresse postale</strong> — 15 Allée des Demoiselles d'Avignon, 92000 Nanterre, France</li>
+                <li><strong>Email</strong> — <a href="mailto:yanis.amine.harrat@gmail.com">yanis.amine.harrat@gmail.com</a></li>
+                <li><strong>Objet</strong> — "Demande de suppression de données - RGPD"</li>
+                <li><strong>Site web</strong> — <a href="https://yanis-harrat.com" target="_blank">yanis-harrat.com</a> | <a href="https://blackrise.io" target="_blank">blackrise.io</a></li>
+                <li><strong>SIREN</strong> — 919 266 668</li>
+                <li><strong>Délai de réponse</strong> — 48 heures maximum pour la confirmation de réception</li>
+            </ul>
+
+            <hr class="divider">
+
+            <h2 id="reclamation">Réclamation auprès de la CNIL</h2>
+            <p>Si vous estimez que vos droits RGPD n'ont pas été respectés ou que votre demande n'a pas été traitée correctement, vous avez le droit de déposer une réclamation auprès de l'autorité de contrôle compétente :</p>
+            <p><strong>Commission Nationale de l'Informatique et des Libertés (CNIL)</strong></p>
+            <ul>
+                <li>3 Place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07</li>
+                <li><strong>Téléphone</strong> — 01 53 73 22 22</li>
+                <li><strong>Site web</strong> — <a href="https://www.cnil.fr" target="_blank">www.cnil.fr</a></li>
+                <li><strong>Formulaire de plainte</strong> — Disponible sur le site de la CNIL</li>
+            </ul>
+            <p>La CNIL est l'autorité française chargée de veiller au respect du RGPD et de la protection des données personnelles.</p>
+        </main>
+
+        <aside class="toc-sidebar">
+            <div class="toc-title">Sur cette page</div>
+            <ul class="toc-list">
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#donnees">Données Supprimées</a></li>
+                <li><a href="#consequences">Conséquences</a></li>
+                <li><a href="#delai">Délai de Suppression</a></li>
+                <li><a href="#procedure">Procédure</a></li>
+                <li><a href="#conservation">Conservation Légale</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#reclamation">Réclamation CNIL</a></li>
+            </ul>
+        </aside>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>© 2026 Black Rise - Harrat Yanis. SIREN 919 266 668. Tous droits réservés.</div>
+            <div class="footer-links">
+                <a href="/">Accueil</a>
+                <a href="/privacy.html">Confidentialité</a>
+                <a href="/terms.html">Conditions</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.getAttribute('id');
+                const tocLink = document.querySelector(`.toc-list a[href="#${id}"]`);
+
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.toc-list a').forEach(link => link.classList.remove('active'));
+                    if (tocLink) tocLink.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-100px 0px -66%' });
+
+        document.querySelectorAll('h2[id]').forEach((section) => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
