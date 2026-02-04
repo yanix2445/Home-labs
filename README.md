@@ -119,4 +119,19 @@ docker network inspect home-labs
 
 ## 📝 Licence
 
-MIT
+Ce projet est sous licence **MIT** - voir le fichier [LICENSE](LICENSE) pour les détails.
+
+### ⚠️ Disclaimer
+
+**Ce projet est fourni "TEL QUEL", sans aucune garantie.**
+
+L'auteur n'est **PAS responsable** de :
+- Tout dommage, perte ou problème résultant de l'utilisation
+- Vulnérabilités de sécurité ou violations de données
+- Interruptions ou défaillances de service
+- Toute utilisation abusive ou malveillante
+- Tout problème de conformité légale ou réglementaire
+
+**En utilisant ce projet, vous assumez TOUS les risques et responsabilités.**
+
+Utilisez-le pour apprendre, analyser le code, ou comme base pour vos propres projets.
