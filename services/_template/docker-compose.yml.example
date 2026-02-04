@@ -1,0 +1,37 @@
+services:
+  service-name:
+    image: your-image:latest
+    container_name: service-name
+    restart: unless-stopped
+
+    # Ports (optionnel si accès via gateway uniquement)
+    # ports:
+    #   - "8080:80"
+
+    # Variables d'environnement
+    # environment:
+    #   - KEY=value
+
+    # Volumes (optionnel)
+    # volumes:
+    #   - ./data:/data
+
+    # Réseau externe home-labs (OBLIGATOIRE)
+    networks:
+      - home-labs
+
+    # Limites de ressources (recommandé)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+
+    # Sécurité (recommandé)
+    security_opt:
+      - no-new-privileges:true
+
+# Réseau externe partagé
+networks:
+  home-labs:
+    external: true
