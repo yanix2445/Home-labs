@@ -36,6 +36,11 @@ ingress:
   - hostname: s3.yanis-harrat.com
     service: http://typebot-minio:9001
 
+  # Pages légales - Politique de confidentialité, CGU, Suppression de données
+  # Requis pour WhatsApp Business et conformité RGPD
+  - hostname: legal.yanis-harrat.com
+    service: http://legal-pages:80
+
   # Route par défaut (obligatoire) - Retourne 404 pour tout le reste
   # Catchall pour les requêtes qui ne matchent aucune règle
   - service: http_status:404
