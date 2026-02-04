@@ -1,0 +1,16 @@
+# Service Excalidraw - Tableau blanc collaboratif en ligne
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    container_name: excalidraw
+    restart: unless-stopped
+
+    # Connexion au réseau partagé pour exposition via le gateway
+    networks:
+      - home-labs
+
+# Réseau externe partagé entre tous les services home-labs
+# Doit être créé manuellement avec: docker network create home-labs
+networks:
+  home-labs:
+    external: true

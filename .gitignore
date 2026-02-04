@@ -1,0 +1,23 @@
+# Fichiers sensibles
+.env
+*.env
+gatway/.env
+
+# Dépendances
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Système
+.DS_Store
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*

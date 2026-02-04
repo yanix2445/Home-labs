@@ -1,0 +1,15 @@
+# Configuration de routage Cloudflare Tunnel
+# Mappe les noms de domaine publics vers les services Docker internes
+
+# IMPORTANT: Les services doivent être joignables via le réseau Docker "home-labs"
+# Format de résolution: http://<nom_du_conteneur>:<port_interne>
+
+ingress:
+  # Excalidraw - Tableau blanc accessible depuis l'extérieur
+  # Domaine public → Conteneur interne sur le réseau home-labs
+  - hostname: excalidraw.yanis-harrat.com
+    service: http://excalidraw:80
+
+  # Route par défaut (obligatoire) - Retourne 404 pour tout le reste
+  # Catchall pour les requêtes qui ne matchent aucune règle
+  - service: http_status:404

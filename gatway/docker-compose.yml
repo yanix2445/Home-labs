@@ -1,0 +1,68 @@
+name: home-labs-gateway
+
+# Gateway Cloudflare Tunnel - Expose les services internes à internet de manière sécurisée
+# Sans ouvrir de ports sur le routeur, tout passe par le tunnel chiffré de Cloudflare
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: home-labs-cloudflared
+    restart: always
+
+    # Lance le tunnel avec la config personnalisée
+    command: >
+      tunnel
+      --no-autoupdate
+      --config /etc/cloudflared/config.yml
+      run
+
+    # Token d'authentification Cloudflare (stocké dans .env)
+    environment:
+      - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
+
+    # Monte la config de routage (lecture seule pour sécurité)
+    volumes:
+      - ./config.yml:/etc/cloudflared/config.yml:ro
+
+    # === SÉCURITÉ RENFORCÉE ===
+    # Empêche l'escalade de privilèges
+    security_opt:
+      - no-new-privileges:true
+    # Supprime toutes les capabilities Linux (principe du moindre privilège)
+    cap_drop:
+      - ALL
+    # Système de fichiers en lecture seule (immutable)
+    read_only: true
+    # tmpfs pour les fichiers temporaires (mémoire volatile)
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+
+    # === LIMITES DE RESSOURCES ===
+    # Protection contre les fuites mémoire ou CPU runaway
+    mem_limit: 256m      # Maximum 256 MB de RAM
+    cpus: "0.50"         # Maximum 50% d'un cœur CPU
+
+    # === ROTATION DES LOGS ===
+    # Évite que les logs remplissent le disque
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"  # Fichier max 10 MB
+        max-file: "5"    # Garde 5 fichiers (50 MB total)
+
+    # === HEALTHCHECK ===
+    # Vérifie que le tunnel est bien connecté à Cloudflare
+    healthcheck:
+      test: ["CMD-SHELL", "cloudflared tunnel info >/dev/null 2>&1 || exit 1"]
+      interval: 30s      # Vérifie toutes les 30 secondes
+      timeout: 5s        # Timeout de la commande
+      retries: 3         # 3 échecs = conteneur unhealthy
+      start_period: 20s  # Délai avant les premiers checks
+
+    # Connexion au réseau partagé pour accéder aux autres services
+    networks:
+      - home-labs
+
+# Réseau externe partagé entre tous les services
+networks:
+  home-labs:
+    external: true
