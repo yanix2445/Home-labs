@@ -1,0 +1,305 @@
+name: typebot
+
+# Typebot - Plateforme de création de chatbots conversationnels no-code
+# Stack complète : PostgreSQL + Builder + Viewer + MinIO (S3)
+services:
+  # === BASE DE DONNÉES PostgreSQL ===
+  typebot-db:
+    image: postgres:16-alpine
+    container_name: typebot-db
+    restart: always
+
+    environment:
+      - POSTGRES_DB=typebot
+      - POSTGRES_USER=typebot
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      # Optimisations PostgreSQL pour petits déploiements
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C
+      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+
+    volumes:
+      - typebot-db-data:/var/lib/postgresql/data
+
+    networks:
+      - home-labs
+
+    # === SÉCURITÉ ===
+    security_opt:
+      - no-new-privileges:true
+    # PostgreSQL a besoin d'écrire, mais on limite les capabilities
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+
+    # === LIMITES DE RESSOURCES ===
+    mem_limit: 512m
+    cpus: "0.50"
+
+    # === ROTATION DES LOGS ===
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # === HEALTHCHECK ===
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U typebot -d typebot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # === TYPEBOT BUILDER (Interface de construction) ===
+  typebot-builder:
+    image: baptistearno/typebot-builder:latest
+    container_name: typebot-builder
+    restart: always
+
+    # Attend que la DB soit vraiment prête
+    depends_on:
+      typebot-db:
+        condition: service_healthy
+
+    environment:
+      # Base de données
+      - DATABASE_URL=postgresql://typebot:${DB_PASSWORD}@typebot-db:5432/typebot
+
+      # URLs publiques
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXT_PUBLIC_VIEWER_URL=${NEXT_PUBLIC_VIEWER_URL}
+
+      # Sécurité
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+
+      # SMTP
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - NEXT_PUBLIC_SMTP_FROM=${SMTP_FROM:-}
+
+      # Stockage S3
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_PORT=${S3_PORT:-9000}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - S3_SSL_ENABLED=${S3_SSL_ENABLED:-false}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET=${S3_BUCKET:-typebot}
+      - S3_PUBLIC_CUSTOM_DOMAIN=${S3_PUBLIC_CUSTOM_DOMAIN:-}
+
+      # Authentification
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+
+      # Configuration
+      - DISABLE_SIGNUP=${DISABLE_SIGNUP:-false}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
+
+    networks:
+      - home-labs
+
+    # === SÉCURITÉ ===
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Next.js a besoin de /tmp et /.next pour le runtime
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m
+
+    # === LIMITES DE RESSOURCES ===
+    mem_limit: 1g
+    cpus: "1.0"
+
+    # === ROTATION DES LOGS ===
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # === HEALTHCHECK ===
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # === TYPEBOT VIEWER (Exécution des bots) ===
+  typebot-viewer:
+    image: baptistearno/typebot-viewer:latest
+    container_name: typebot-viewer
+    restart: always
+
+    depends_on:
+      typebot-db:
+        condition: service_healthy
+
+    environment:
+      # Base de données
+      - DATABASE_URL=postgresql://typebot:${DB_PASSWORD}@typebot-db:5432/typebot
+
+      # URLs publiques
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXT_PUBLIC_VIEWER_URL=${NEXT_PUBLIC_VIEWER_URL}
+
+      # Sécurité
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+
+      # Stockage S3
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_PORT=${S3_PORT:-9000}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - S3_SSL_ENABLED=${S3_SSL_ENABLED:-false}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET=${S3_BUCKET:-typebot}
+      - S3_PUBLIC_CUSTOM_DOMAIN=${S3_PUBLIC_CUSTOM_DOMAIN:-}
+
+    networks:
+      - home-labs
+
+    # === SÉCURITÉ ===
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m
+
+    # === LIMITES DE RESSOURCES ===
+    mem_limit: 1g
+    cpus: "1.0"
+
+    # === ROTATION DES LOGS ===
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # === HEALTHCHECK ===
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # === MinIO (Stockage S3) ===
+  typebot-minio:
+    image: minio/minio:latest
+    container_name: typebot-minio
+    restart: always
+
+    command: server /data --console-address ":9001"
+
+    environment:
+      - MINIO_ROOT_USER=${S3_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${S3_SECRET_KEY}
+      # Optimisations MinIO
+      - MINIO_BROWSER_REDIRECT_URL=${MINIO_CONSOLE_URL:-}
+      # Configuration CORS pour Typebot
+      - MINIO_API_CORS_ALLOW_ORIGIN=*
+
+    volumes:
+      - typebot-s3-data:/data
+
+    networks:
+      - home-labs
+
+    # === SÉCURITÉ ===
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
+    # === LIMITES DE RESSOURCES ===
+    mem_limit: 512m
+    cpus: "0.50"
+
+    # === ROTATION DES LOGS ===
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # === HEALTHCHECK ===
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # === Initialisation bucket S3 ===
+  typebot-createbuckets:
+    image: minio/mc:latest
+    container_name: typebot-createbuckets
+    restart: "no"
+
+    depends_on:
+      typebot-minio:
+        condition: service_healthy
+
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Configuration du bucket S3...';
+      /usr/bin/mc alias set minio http://typebot-minio:9000 ${S3_ACCESS_KEY} ${S3_SECRET_KEY};
+      /usr/bin/mc mb --ignore-existing minio/${S3_BUCKET:-typebot};
+      /usr/bin/mc anonymous set public minio/${S3_BUCKET:-typebot};
+      echo 'Bucket configuré avec succès';
+      exit 0;
+      "
+
+    networks:
+      - home-labs
+
+    # === SÉCURITÉ ===
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Tmpfs pour la config MinIO MC
+    tmpfs:
+      - /root/.mc:rw,noexec,nosuid,size=16m
+
+    # === LIMITES DE RESSOURCES ===
+    mem_limit: 128m
+    cpus: "0.25"
+
+    # === ROTATION DES LOGS ===
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+# Réseau externe partagé entre tous les services home-labs
+networks:
+  home-labs:
+    external: true
+
+# Volumes Docker pour la persistance des données
+volumes:
+  typebot-db-data:
+    name: typebot-db-data
+  typebot-s3-data:
+    name: typebot-s3-data
