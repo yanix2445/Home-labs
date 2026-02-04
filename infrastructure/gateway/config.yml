@@ -10,6 +10,32 @@ ingress:
   - hostname: excalidraw.yanis-harrat.com
     service: http://excalidraw:80
 
+  # Typebot Builder - Interface de construction de chatbots
+  # Port 3000 est le port interne de l'application Next.js
+  - hostname: typebot.yanis-harrat.com
+    service: http://typebot-builder:3000
+
+  # Typebot Viewer - Exécution et affichage des chatbots
+  # Port 3000 est le port interne de l'application Next.js
+  - hostname: bot.yanis-harrat.com
+    service: http://typebot-viewer:3000
+
+  # MinIO S3 API - Endpoint de stockage pour uploads de fichiers
+  # Port 9000 est le port de l'API S3 (utilisé par Typebot)
+  - hostname: storage.yanis-harrat.com
+    service: http://typebot-minio:9000
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 60s
+      tcpKeepAlive: 30s
+      keepAliveTimeout: 90s
+      disableChunkedEncoding: true
+
+  # MinIO Console - Interface web de gestion S3 pour Typebot
+  # Port 9001 est le port de la console web MinIO
+  - hostname: s3.yanis-harrat.com
+    service: http://typebot-minio:9001
+
   # Route par défaut (obligatoire) - Retourne 404 pour tout le reste
   # Catchall pour les requêtes qui ne matchent aucune règle
   - service: http_status:404
