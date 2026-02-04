@@ -1,7 +1,7 @@
 # Fichiers sensibles
 .env
 *.env
-gatway/.env
+infrastructure/gateway/.env
 .claude/settings.local.json
 # Dépendances
 node_modules/
