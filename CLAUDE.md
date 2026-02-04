@@ -70,11 +70,20 @@ docker compose up -d
 # Voir les logs
 docker compose logs -f
 
+# Voir les logs d'un conteneur spécifique
+docker compose logs -f <nom-du-conteneur>
+
 # Arrêter un service
 docker compose down
 
-# Redémarrer un service
+# Redémarrer un service (ne recharge PAS les .env)
 docker compose restart
+
+# Recréer les conteneurs (recharge les .env et la config)
+docker compose up -d --force-recreate
+
+# Voir l'état de tous les conteneurs d'un service
+docker compose ps
 ```
 
 ### Gestion de la passerelle
@@ -121,7 +130,150 @@ docker compose up -d
 5. Redémarrer la passerelle : `cd infrastructure/gateway && docker compose restart`
 6. Démarrer le service : `cd services/mon-service && docker compose up -d`
 
+### Bonnes pratiques pour les nouveaux services
+- **Volumes** : Utiliser des volumes Docker nommés plutôt que des bind mounts
+  ```yaml
+  volumes:
+    service-data:
+      name: service-data  # Nom explicite plutôt que préfixe automatique
+  ```
+- **Healthchecks** : Inclure pour tous les services critiques
+  ```yaml
+  healthcheck:
+    test: ["CMD-SHELL", "command-to-test"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 40s
+  ```
+- **Sécurité** : Appliquer les mêmes paramètres que le gateway
+  ```yaml
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,size=128m
+  ```
+- **Ressources** : Définir des limites pour éviter les fuites
+  ```yaml
+  mem_limit: 512m
+  cpus: "0.50"
+  ```
+- **Logs** : Configurer la rotation pour éviter de remplir le disque
+  ```yaml
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+  ```
+- **Dépendances** : Utiliser `condition: service_healthy` pour orchestrer le démarrage
+  ```yaml
+  depends_on:
+    db:
+      condition: service_healthy
+  ```
+
 Documentation complète : `docs/adding-services.md`
+
+### Exemples de services
+
+#### Service simple (Excalidraw)
+Un seul conteneur sans dépendances :
+```yaml
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    container_name: excalidraw
+    restart: unless-stopped
+    networks:
+      - home-labs
+
+networks:
+  home-labs:
+    external: true
+```
+
+#### Service multi-conteneurs (Typebot)
+Stack complète avec base de données, application, stockage :
+```yaml
+name: typebot
+
+services:
+  typebot-db:
+    image: postgres:16-alpine
+    volumes:
+      - typebot-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U typebot -d typebot"]
+    networks:
+      - home-labs
+
+  typebot-builder:
+    image: baptistearno/typebot-builder:latest
+    depends_on:
+      typebot-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://user:pass@typebot-db:5432/db
+    networks:
+      - home-labs
+
+  typebot-minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    volumes:
+      - typebot-s3-data:/data
+    networks:
+      - home-labs
+
+volumes:
+  typebot-db-data:
+    name: typebot-db-data
+  typebot-s3-data:
+    name: typebot-s3-data
+
+networks:
+  home-labs:
+    external: true
+```
+
+Points clés pour les stacks multi-conteneurs :
+- Utiliser `name:` pour nommer le projet Docker Compose
+- Les conteneurs se résolvent par leur nom de service sur le réseau (ex: `typebot-db`)
+- Utiliser `depends_on` avec `condition: service_healthy` pour l'orchestration
+- Créer des volumes nommés pour chaque composant persistant
+
+## Dépannage des services
+
+### Changements de configuration ne prennent pas effet
+- **Problème** : `docker compose restart` ne recharge pas les variables d'environnement depuis `.env`
+- **Solution** : Utiliser `docker compose up -d --force-recreate` pour recréer les conteneurs
+
+### Service inaccessible via Cloudflare Tunnel
+- **Vérifications** :
+  1. Le service est sur le réseau `home-labs` : `docker network inspect home-labs`
+  2. La règle d'ingress est dans `infrastructure/gateway/config.yml`
+  3. Le gateway a été redémarré : `cd infrastructure/gateway && docker compose restart`
+  4. Les logs du tunnel : `docker logs home-labs-cloudflared`
+
+### Erreurs de connexion entre services (ECONNREFUSED)
+- Vérifier que le service cible est démarré et healthy
+- Utiliser le nom du conteneur comme hostname (ex: `http://typebot-minio:9000`)
+- Ne pas oublier le protocole `http://` ou `https://` dans les URLs
+
+### Configuration S3/MinIO
+- **Endpoint** : Utiliser le domaine public via Cloudflare (ex: `storage.yanis-harrat.com`)
+- **Port** : `443` pour HTTPS via Cloudflare, `9000` en local
+- **SSL** : `true` pour HTTPS via Cloudflare
+- **Public URL** : Inclure le nom du bucket (ex: `https://storage.yanis-harrat.com/bucket-name`)
+- **CORS** : Ajouter `MINIO_API_CORS_ALLOW_ORIGIN=*` pour les uploads depuis le navigateur
+
+### Permissions Docker
+- Si `cap_drop: ALL` bloque des opérations, ajouter les capabilities nécessaires avec `cap_add`
+- Pour l'écriture de fichiers : `cap_add: [CHOWN, SETUID, SETGID]`
+- Pour tmpfs : Monter dans le conteneur : `tmpfs: - /path:rw,noexec,nosuid,size=128m`
 
 ## Notes de sécurité
 
