@@ -1,36 +1,18 @@
-# 🌐 Infrastructure
+# Infrastructure
 
-> Composants d'infrastructure de base pour Home Labs.
+> Composants d'infrastructure pour Home Labs.
+
+📚 **Documentation complète** → [docs/infrastructure/](../docs/infrastructure/)
 
 ## Composants
 
-| Composant | Description | Documentation |
-|-----------|-------------|---------------|
-| 🔒 [Gateway](gateway/) | Cloudflare Tunnel | [README](gateway/README.md) |
+| Composant | Description |
+|-----------|-------------|
+| [gateway/](gateway/) | Cloudflare Tunnel |
 
-## Architecture
-
-```mermaid
-graph LR
-    INTERNET[🌐 Internet] --> CF[☁️ Cloudflare]
-    CF --> GW[🔒 Gateway]
-    GW --> NET[Réseau home-labs]
-    NET --> SERVICES[📦 Services]
-```
-
-## Démarrage
+## Démarrage Rapide
 
 ```bash
-# Créer le réseau
 docker network create home-labs
-
-# Démarrer le gateway
-cd gateway
-cp .env.example .env
-# Éditer .env
-docker compose up -d
+cd gateway && docker compose up -d
 ```
-
-## 📚 Documentation
-
-➡️ [Documentation Infrastructure](../docs/infrastructure/README.md)

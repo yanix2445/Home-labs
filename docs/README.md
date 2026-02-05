@@ -8,10 +8,10 @@
 |---------|-------------|
 | [🚀 Quickstart](guides/quickstart.md) | Démarrer en 5 minutes |
 | [🏗️ Architecture](architecture.md) | Vue d'ensemble technique |
-| [🌐 Infrastructure](infrastructure/README.md) | Gateway, réseau, sécurité |
-| [📦 Services](services/README.md) | Catalogue des services |
+| [🌐 Infrastructure](infrastructure/gateway.md) | Gateway, réseau, sécurité |
+| [📦 Services](services/legal-pages.md) | Catalogue des services |
 | [📖 Guides](guides/quickstart.md) | Tutoriels et guides |
-| [🔧 Scripts](scripts/README.md) | Utilitaires et automation |
+| [🔧 Scripts](guides/quickstart.md) | Utilitaires et automation |
 
 ---
 
@@ -127,7 +127,7 @@ home-labs/
 <summary><strong>📦 Gestion des Services</strong></summary>
 
 - [Ajouter un service](adding-services.md) — Créer un nouveau service
-- [Catalogue des services](services/README.md) — Tous les services disponibles
+- [Excalidraw](services/excalidraw.md), [Legal Pages](services/legal-pages.md), [Typebot](services/typebot.md)
 
 </details>
 
