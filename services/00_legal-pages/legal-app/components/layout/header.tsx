@@ -12,6 +12,9 @@ const navLinks = [
   { href: '/privacy', label: 'Confidentialité' },
   { href: '/terms', label: 'Conditions' },
   { href: '/deletion', label: 'Suppression' },
+  { href: '/complaint', label: 'Réclamation' },
+  { href: '/mentions-legales', label: 'Mentions' },
+  { href: '/cookies', label: 'Cookies' },
   { href: '/contact', label: 'Contact' },
 ] as const;
 
@@ -23,12 +26,12 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full">
       {/* Gradient border bottom */}
       <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
-      
+
       <div className="glass-strong">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="group flex items-center gap-3 font-semibold transition-all hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
             aria-label="Black Rise — Accueil"
           >
@@ -104,8 +107,8 @@ export function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <nav 
-        id="mobile-menu" 
+      <nav
+        id="mobile-menu"
         className={cn(
           'md:hidden overflow-hidden transition-all duration-300',
           isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'

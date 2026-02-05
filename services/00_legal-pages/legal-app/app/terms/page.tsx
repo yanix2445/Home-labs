@@ -125,12 +125,9 @@ const sections = [
   {
     id: 'mediation',
     title: 'Médiation de la consommation (B2C)',
-    content: `Conformément aux articles L.616-1 et R.616-1 du code de la consommation, nous proposons un dispositif de médiation de la consommation. En cas de litige non résolu par notre service client, le consommateur peut saisir gratuitement le médiateur de la consommation :
+    content: `Conformément aux articles L.616-1 et R.616-1 du code de la consommation, nous proposons un dispositif de médiation de la consommation. En cas de litige, vous pouvez contacter notre service client en priorité.
     
-    [Nom du Médiateur - ex: CM2C]
-    Adresse : [Adresse du Médiateur]
-    Site web : [Site web du Médiateur]
-    Email : [Email du Médiateur]`,
+    À défaut de résolution amiable, et conformément à la législation pour les micro-entreprises, tout litige sera porté devant les tribunaux compétents.`,
   },
   {
     id: 'contact',

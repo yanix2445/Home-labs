@@ -2,9 +2,14 @@ import Link from 'next/link';
 import { SparklesIcon } from '@/components/ui/icons';
 
 const legalLinks = [
+  { href: '/', label: 'Accueil' },
+  { href: '/mentions-legales', label: 'Mentions Légales' },
   { href: '/privacy', label: 'Politique de Confidentialité' },
+  { href: '/cookies', label: 'Politique de Cookies' },
   { href: '/terms', label: 'Conditions de Service' },
   { href: '/deletion', label: 'Suppression des Données' },
+  { href: '/complaint', label: 'Réclamation' },
+  { href: '/contact', label: 'Contact' },
 ] as const;
 
 const contactLinks = [
@@ -17,20 +22,20 @@ export function Footer() {
   return (
     <footer className="relative border-t border-white/5" role="contentinfo">
       {/* Background gradient */}
-      <div 
+      <div
         className="absolute inset-0 opacity-30 pointer-events-none"
-        style={{ 
-          background: 'radial-gradient(ellipse at bottom, oklch(0.72 0.25 340 / 10%), transparent 60%)' 
+        style={{
+          background: 'radial-gradient(ellipse at bottom, oklch(0.72 0.25 340 / 10%), transparent 60%)'
         }}
         aria-hidden="true"
       />
-      
+
       <div className="container relative py-16">
         <div className="grid gap-12 lg:grid-cols-4">
           {/* Brand */}
           <div className="lg:col-span-2 space-y-4">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="inline-flex items-center gap-3 font-semibold transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
               aria-label="Black Rise — Accueil"
             >
@@ -40,7 +45,7 @@ export function Footer() {
               <span className="text-xl tracking-tight">Black&nbsp;Rise</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-              Holding technologique multisectoriel : développement logiciel, 
+              Holding technologique multisectoriel : développement logiciel,
               jeux vidéo, commerce digital et création de contenu.
             </p>
           </div>
@@ -53,8 +58,8 @@ export function Footer() {
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.href}>
-                  <Link 
-                    href={link.href} 
+                  <Link
+                    href={link.href}
                     className="text-sm text-foreground/80 hover:text-primary transition-colors focus-visible:ring-2 focus-visible:ring-ring rounded"
                   >
                     {link.label}
@@ -73,15 +78,15 @@ export function Footer() {
               {contactLinks.map((link) => (
                 <li key={link.href}>
                   {'external' in link ? (
-                    <a 
+                    <a
                       href={link.href}
                       className="text-sm text-foreground/80 hover:text-primary transition-colors focus-visible:ring-2 focus-visible:ring-ring rounded"
                     >
                       {link.label}
                     </a>
                   ) : (
-                    <Link 
-                      href={link.href} 
+                    <Link
+                      href={link.href}
                       className="text-sm text-foreground/80 hover:text-primary transition-colors focus-visible:ring-2 focus-visible:ring-ring rounded"
                     >
                       {link.label}

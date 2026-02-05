@@ -53,9 +53,9 @@ const sections = [
     title: 'Partage des Données',
     content: 'Nous partageons vos données uniquement avec les destinataires suivants pour les finalités citées :',
     items: [
-      `Hébergement — OVH, Vercel, AWS (Sous-traitants, Stockage sécurisé en UE)`,
-      `Paiement — Stripe, PayPal (Responsables de traitement autonomes, transaction)`,
-      `Communication — Resend, WhatsApp API (Sous-traitants, envoi de notifications)`,
+      `Hébergement — Serveurs Privés Black Rise (France, Auto-hébergement)`,
+      `Sécurité & Réseau — Cloudflare (USA/Monde - Standard contractual clauses)`,
+      `Transparence — GitHub (Code source public, pas de données personnelles)`,
       `Autorités — Si requis par la loi ou sur réquisition judiciaire`,
     ],
   },

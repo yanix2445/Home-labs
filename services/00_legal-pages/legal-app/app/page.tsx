@@ -47,7 +47,7 @@ const contactCards = [
 ] as const;
 
 const stats = [
-  { value: '30j', label: 'Délai max. suppression' },
+  { value: '30 jours', label: 'Délai maximum de suppression' },
   { value: '48h', label: 'Réponse garantie' },
   { value: '100%', label: 'Conforme RGPD' },
 ] as const;

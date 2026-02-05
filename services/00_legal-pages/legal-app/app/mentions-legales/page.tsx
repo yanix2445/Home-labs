@@ -52,7 +52,7 @@ export default function MentionsLegalesPage() {
                                         <li>SIREN : 919 266 668</li>
                                         <li>SIRET : 919 266 668 00020</li>
                                         <li>Code APE : 6201Z</li>
-                                        <li>TVA Intracommunautaire : [Numéro TVA ou "Non assujetti"]</li>
+                                        <li>TVA : Non assujetti (Franchise en base)</li>
                                     </ul>
                                 </div>
                             </div>
@@ -66,7 +66,7 @@ export default function MentionsLegalesPage() {
                         </CardHeader>
                         <CardContent className="text-muted-foreground">
                             <p>
-                                <strong>Yanis Harrat</strong><br />
+                                <strong>Yanis (Mohamed-Amine) Harrat</strong><br />
                                 Email de contact : <a href="mailto:yanis.amine.harrat@gmail.com" className="text-primary hover:underline">yanis.amine.harrat@gmail.com</a>
                             </p>
                         </CardContent>
@@ -75,17 +75,29 @@ export default function MentionsLegalesPage() {
                     {/* Hébergeur */}
                     <Card className="glass">
                         <CardHeader>
-                            <CardTitle>3. Hébergement</CardTitle>
+                            <CardTitle>3. Hébergement & Infrastructure</CardTitle>
                         </CardHeader>
                         <CardContent className="text-muted-foreground">
-                            <p>
-                                Le site est hébergé par :<br />
-                                <strong className="text-foreground">[Nom de l'hébergeur - ex: Vercel Inc. / OVH SAS]</strong><br />
-                                [Adresse de l'hébergeur]<br />
-                                [Téléphone de l'hébergeur]
+                            <p className="mb-4">
+                                Ce site et ses données sont <strong>auto-hébergés</strong> sur des serveurs privés gérés par Black Rise.
                             </p>
-                            <p className="mt-4 text-sm bg-muted/50 p-3 rounded-lg border border-border/50">
-                                Les données sont stockées exclusivement sur des serveurs situés dans l'Union Européenne.
+                            <div className="grid gap-4 sm:grid-cols-2 text-sm">
+                                <div className="p-3 rounded-lg border border-border/50 bg-muted/30">
+                                    <strong className="text-foreground block mb-1">Infrastructure Physique</strong>
+                                    Localisation : Nanterre, France<br />
+                                    Gestion : Yanis Harrat (Black Rise)<br />
+                                    Type : Serveurs Privés & Locaux
+                                </div>
+                                <div className="p-3 rounded-lg border border-border/50 bg-muted/30">
+                                    <strong className="text-foreground block mb-1">Réseau & Sécurité</strong>
+                                    Prestataire : Cloudflare Inc.<br />
+                                    Adresse : 101 Townsend St, San Francisco, USA<br />
+                                    Rôle : DNS, CDN, Tunneling & Proxy
+                                </div>
+                            </div>
+                            <p className="mt-4 text-xs bg-muted/50 p-3 rounded-lg border border-border/50">
+                                Les données sensibles sont stockées localement en France/Europe. Seul le trafic public transite de manière chiffrée via le réseau Cloudflare.
+                                Le code source est public (Open Source) et hébergé sur GitHub.
                             </p>
                         </CardContent>
                     </Card>
