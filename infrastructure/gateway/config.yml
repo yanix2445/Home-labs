@@ -39,7 +39,7 @@ ingress:
   # Pages légales - Politique de confidentialité, CGU, Suppression de données
   # Requis pour WhatsApp Business et conformité RGPD
   - hostname: legal.yanis-harrat.com
-    service: http://legal-pages:80
+    service: http://legal-pages:3000
 
   # Route par défaut (obligatoire) - Retourne 404 pour tout le reste
   # Catchall pour les requêtes qui ne matchent aucune règle

@@ -1,8 +1,314 @@
+#############################################
+# 0) ABSOLU : secrets & fichiers sensibles
+#############################################
+
+# Env (général)
+.env
+*.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+
+# Spécifiques (tes chemins)
+infrastructure/gateway/.env
+.env.local
+
+# Clés / Certs
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+*.jks
+*.keystore
+
+# Credentials & cloud
+**/credentials.json
+**/service-account*.json
+**/google-credentials*.json
+**/aws-credentials*
+**/.aws/
+**/.gcp/
+**/.azure/
+
+#############################################
+# 1) Dossiers IA / agents / index
+#############################################
+
+# Cursor
+.cursor/
+.cursor-cache/
+.cursorindexingignore
+.cursorignore
+
+# Claude Code / Anthropic
+.claude/
+.claudeignore
+
+# Agents génériques (comme dans ton snippet)
+.agent/
+.agents/
+
+# Gemini / Antigravity / Google tooling (noms fréquemment vus)
+.gemini/
+.geminiignore
+.antigravity/
+
+# Traces / logs agents (selon tools)
+**/*agent-trace*
+**/*.trace
+**/*.llm-log
+**/*.prompt-log
+
+#############################################
+# 2) Dépendances
+#############################################
+
+# Node / JS
+node_modules/
+.pnpm-store/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Python
+.venv/
+venv/
+__pypackages__/
+.pytest_cache/
+.mypy_cache/
+.pytype/
+.pyre/
+.ruff_cache/
+pip-wheel-metadata/
+
+# Rust
+target/
+
+# Go
+bin/
+dist/
+*.test
+*.out
+
+# Java / Kotlin / Gradle / Maven
+.gradle/
+**/build/
+*.class
+*.jar
+*.war
+*.ear
+**/out/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.snupkg
+
+#############################################
+# 3) Build artifacts / outputs
+#############################################
+
+# Générique
+dist/
+build/
+.tmp/
+temp/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+.vite/
+.rollup.cache/
+.esbuild/
+.turbo/
+.storybook-static/
+
+# Mobile / Desktop packaging
+*.app
+*.dmg
+*.pkg
+*.ipa
+*.apk
+*.aab
+*.msi
+*.exe
+
+#############################################
+# 4) Logs / coverage / debug
+#############################################
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+**/logs/
+*.pid
+*.seed
+
+# Coverage / reports
+coverage/
+.nyc_output/
+lcov-report/
+*.lcov
+*.profraw
+*.profdata
+
+#############################################
+# 5) OS junk
+#############################################
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.stackdump
+
+# Linux
+*~
+.fuse_hidden*
+.nfs*
+
+#############################################
+# 6) IDE / éditeurs
+#############################################
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# JetBrains
+.idea/
+*.iml
+
+# Visual Studio
+.vs/
+
+#############################################
+# 7) Xcode / Apple (iOS + macOS)
+#############################################
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# Builds
+DerivedData/
+.build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# SwiftPM
+.swiftpm/
+Package.resolved
+
+#############################################
+# 8) Android / Gradle (si tu fais aussi mobile)
+#############################################
+
+# Android Studio
+*.jks
+*.keystore
+.local.properties
+
+# Gradle cache
+.gradle/
+**/build/
+
+#############################################
+# 9) Docker / containers
+#############################################
+
+# Docker local overrides
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Volumes locaux (si tu en crées dans le repo)
+**/docker-data/
+**/volumes/
+
+#############################################
+# 10) Infra / IaC / Terraform
+#############################################
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+#############################################
+# 11) Misc
+#############################################
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+
+# DB locales
+*.sqlite
+*.sqlite3
+*.db
+*.mdb
+
+# Local-only config patterns (safe)
+*.local.*
+*.dev.*
+*.private.*
+
+#############################################
+# 12) Ton snippet (conservé tel quel)
+#############################################
+
 # Fichiers sensibles
 .env
 *.env
 infrastructure/gateway/.env
-.claude/settings.local.json
+.claude/
+.agent/
+.cursor/
+.agents/
+.env.local
+
 # Dépendances
 node_modules/
 

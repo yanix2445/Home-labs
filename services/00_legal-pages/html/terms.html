@@ -752,7 +752,7 @@
                 const tocLink = document.querySelector(`.toc-list a[href="#${id}"]`);
 
                 if (entry.isIntersecting) {
-                    document.querySelectorAll('.toc-list a').forEach(link => link.classList.remove('active'));
+                    document.querySelectorAll('.toc-list a').forEach(link => { link.classList.remove('active'); });
                     if (tocLink) tocLink.classList.add('active');
                 }
             });

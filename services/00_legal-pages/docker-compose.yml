@@ -1,16 +1,22 @@
 name: legal-pages
 
 # Pages légales pour WhatsApp Business et services
-# Héberge : Politique de confidentialité, CGU, Suppression des données
+# Next.js avec formulaires (contact, réclamation, suppression RGPD)
 
 services:
-  nginx:
-    image: nginx:alpine
+  legal-pages:
+    build:
+      context: ./legal-app
+      dockerfile: Dockerfile
     container_name: legal-pages
     restart: unless-stopped
 
-    volumes:
-      - ./html:/usr/share/nginx/html:ro
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-yanis.amine.harrat@gmail.com}
+      - FROM_EMAIL=${FROM_EMAIL:-legal@blackrise.io}
 
     networks:
       - home-labs
@@ -20,30 +26,25 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    cap_add:
-      - CHOWN
-      - SETUID
-      - SETGID
-      - NET_BIND_SERVICE
 
     # Limites de ressources
-    mem_limit: 64m
-    cpus: "0.10"
+    mem_limit: 256m
+    cpus: "0.25"
 
     # Rotation des logs
     logging:
       driver: json-file
       options:
-        max-size: "5m"
-        max-file: "2"
+        max-size: "10m"
+        max-file: "3"
 
     # Healthcheck
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/ || exit 1"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 3
-      start_period: 5s
+      start_period: 30s
 
 networks:
   home-labs:
