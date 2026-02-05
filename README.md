@@ -1,137 +1,160 @@
 # 🏠 Home Labs
 
-Infrastructure home lab auto-hébergée avec Docker Compose et Cloudflare Tunnel.
+> Infrastructure home lab auto-hébergée avec Docker Compose et Cloudflare Tunnel.
 
-## 📋 Architecture
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://docs.docker.com/compose/)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-Tunnel-orange.svg)](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)
 
+## 📋 Vue d'Ensemble
+
+```mermaid
+graph TB
+    subgraph Internet
+        USER[👤 Utilisateur]
+    end
+    
+    subgraph Cloudflare
+        CF[☁️ Cloudflare Edge]
+    end
+    
+    subgraph "Home Labs Server"
+        TUNNEL[🔒 Cloudflare Tunnel]
+        
+        subgraph "Réseau Docker: home-labs"
+            EXCALIDRAW[📝 Excalidraw]
+            LEGAL[⚖️ Legal Pages]
+            TYPEBOT[🤖 Typebot]
+        end
+    end
+    
+    USER --> CF --> TUNNEL
+    TUNNEL --> EXCALIDRAW
+    TUNNEL --> LEGAL
+    TUNNEL --> TYPEBOT
 ```
-home-labs/
-├── infrastructure/     # Infrastructure de base (gateway, réseau)
-├── services/          # Services applicatifs auto-hébergés
-├── docs/             # Documentation détaillée
-└── scripts/          # Scripts utilitaires
-```
 
-### Réseau Docker
+## 📦 Services
 
-Tous les services se connectent à un réseau Docker externe nommé `home-labs`. Créez-le avec :
-
-```bash
-docker network create home-labs
-```
-
-### Gateway Cloudflare Tunnel
-
-Le répertoire `infrastructure/gateway/` contient le Cloudflare Tunnel qui expose les services à internet de manière sécurisée.
+| Service | Description | URL |
+|---------|-------------|-----|
+| 📝 Excalidraw | Tableau blanc collaboratif | [excalidraw.yanis-harrat.com](https://excalidraw.yanis-harrat.com) |
+| ⚖️ Legal Pages | Pages légales RGPD | [legal.yanis-harrat.com](https://legal.yanis-harrat.com) |
+| 🤖 Typebot | Plateforme chatbots no-code | [typebot.yanis-harrat.com](https://typebot.yanis-harrat.com) |
 
 ## 🚀 Démarrage Rapide
 
-### 1. Créer le réseau Docker
-
 ```bash
+# 1. Cloner
+git clone https://github.com/yanix2445/Home-labs.git
+cd Home-labs
+
+# 2. Créer le réseau
 docker network create home-labs
-```
 
-### 2. Configurer le Gateway
-
-```bash
+# 3. Configurer le gateway
 cd infrastructure/gateway
 cp .env.example .env
-# Éditez .env et ajoutez votre CF_TUNNEL_TOKEN
-docker compose up -d
+# Éditer .env avec votre CF_TUNNEL_TOKEN
+
+# 4. Démarrer
+cd ../..
+./scripts/start-all.sh
 ```
 
-### 3. Démarrer un service
+## 📂 Structure
 
-```bash
-cd services/excalidraw
-docker compose up -d
+```
+home-labs/
+├── infrastructure/        # Gateway Cloudflare Tunnel
+│   └── gateway/
+├── services/             # Services applicatifs
+│   ├── 00_legal-pages/   # Pages légales (Next.js)
+│   ├── 01_excalidraw/    # Tableau blanc
+│   ├── 02_typebot/       # Chatbots
+│   └── _template/        # Template de service
+├── scripts/              # Utilitaires
+│   ├── start-all.sh
+│   ├── stop-all.sh
+│   └── create-service.sh
+└── docs/                 # Documentation complète
 ```
 
-## 📚 Services Disponibles
+## 🛠️ Commandes
 
-| Service | Description | Port | URL Publique |
-|---------|-------------|------|--------------|
-| Excalidraw | Tableau blanc collaboratif | 80 | [excalidraw.yanis-harrat.com](https://excalidraw.yanis-harrat.com) |
+| Commande | Description |
+|----------|-------------|
+| `./scripts/start-all.sh` | Démarrer tous les services |
+| `./scripts/stop-all.sh` | Arrêter tous les services |
+| `./scripts/create-service.sh <nom>` | Créer un nouveau service |
 
-## ➕ Ajouter un Nouveau Service
-
-1. Copiez le template :
-   ```bash
-   cp -r services/_template services/mon-service
-   mv services/mon-service/docker-compose.yml.example services/mon-service/docker-compose.yml
-   ```
-
-2. Éditez `docker-compose.yml` avec votre configuration
-
-3. Ajoutez une règle d'ingress dans `infrastructure/gateway/config.yml` :
-   ```yaml
-   - hostname: mon-service.yanis-harrat.com
-     service: http://mon-service:80
-   ```
-
-4. Redémarrez le gateway :
-   ```bash
-   cd infrastructure/gateway
-   docker compose restart
-   ```
-
-5. Démarrez votre service :
-   ```bash
-   cd services/mon-service
-   docker compose up -d
-   ```
-
-## 🛠️ Commandes Utiles
+<details>
+<summary><strong>Commandes Docker</strong></summary>
 
 ```bash
-# Voir les logs d'un service
-cd services/excalidraw
+# Logs d'un service
+cd services/<service>
 docker compose logs -f
 
-# Arrêter un service
-docker compose down
-
-# Redémarrer un service
+# Redémarrer
 docker compose restart
 
-# Voir tous les conteneurs du réseau home-labs
-docker network inspect home-labs
+# Rebuild
+docker compose up -d --build
 ```
 
-## 📖 Documentation
+</details>
 
-- [Architecture détaillée](docs/architecture.md)
-- [Ajouter un service](docs/adding-services.md)
-- [Instructions pour Claude](CLAUDE.md)
+## ➕ Ajouter un Service
+
+```bash
+# Méthode rapide
+./scripts/create-service.sh mon-service
+
+# Puis éditer et démarrer
+cd services/mon-service
+nano docker-compose.yml
+docker compose up -d
+```
+
+➡️ [Guide complet](docs/adding-services.md)
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [📖 Documentation](docs/README.md) | Index de la documentation |
+| [🏗️ Architecture](docs/architecture.md) | Vue technique détaillée |
+| [➕ Ajouter un service](docs/adding-services.md) | Guide de création |
+| [🔧 Troubleshooting](docs/guides/troubleshooting.md) | Résolution de problèmes |
+| [🤖 CLAUDE.md](CLAUDE.md) | Instructions pour agents IA |
 
 ## 🔒 Sécurité
 
-- Les fichiers `.env` ne sont jamais committés (vérifiez `.gitignore`)
-- Les conteneurs ont des limites de ressources
-- Paramètres de sécurité renforcés (no-new-privileges)
-- Accès externe uniquement via Cloudflare Tunnel
+- ✅ Aucun port exposé publiquement
+- ✅ Tunnel chiffré TLS via Cloudflare
+- ✅ Conteneurs avec `no-new-privileges`
+- ✅ Limites de ressources (CPU/RAM)
+- ✅ Secrets via `.env` (non versionnés)
+
+## 🏢 Contexte
+
+**Black Rise** (SIREN: 919 266 668) - Infrastructure pour activités multi-sectorielles :
+- Développement web et logiciel
+- Développement de jeux vidéo
+- Commerce digital
+- Marketing digital
+- Production vidéo
 
 ## 🔗 Liens
 
-- **Site Web** : [yanis-harrat.com](https://yanis-harrat.com)
-- **Dépôt GitHub** : [Home-labs](https://github.com/yanix2445/Home-labs)
+| Ressource | URL |
+|-----------|-----|
+| 🌐 Site Web | [yanis-harrat.com](https://yanis-harrat.com) |
+| 📦 GitHub | [yanix2445/Home-labs](https://github.com/yanix2445/Home-labs) |
 
 ## 📝 Licence
 
-Ce projet est sous licence **MIT** - voir le fichier [LICENSE](LICENSE) pour les détails.
+[MIT](LICENSE) - Voir le fichier LICENSE pour les détails et le disclaimer.
 
-### ⚠️ Disclaimer
-
-**Ce projet est fourni "TEL QUEL", sans aucune garantie.**
-
-L'auteur n'est **PAS responsable** de :
-- Tout dommage, perte ou problème résultant de l'utilisation
-- Vulnérabilités de sécurité ou violations de données
-- Interruptions ou défaillances de service
-- Toute utilisation abusive ou malveillante
-- Tout problème de conformité légale ou réglementaire
-
-**En utilisant ce projet, vous assumez TOUS les risques et responsabilités.**
-
-Utilisez-le pour apprendre, analyser le code, ou comme base pour vos propres projets.
+> ⚠️ **Disclaimer** : Ce projet est fourni "TEL QUEL". L'auteur n'est pas responsable des dommages résultant de son utilisation.

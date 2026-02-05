@@ -1,19 +1,30 @@
-# Pages Légales - Black Rise
+# ⚖️ Legal Pages
 
-Site de documentation légale avec formulaires de contact, réclamation et suppression RGPD.
+> Pages légales avec formulaires RGPD (contact, réclamation, suppression).
+
+## Vue d'Ensemble
+
+| Propriété | Valeur |
+|-----------|--------|
+| **URL** | [legal.yanis-harrat.com](https://legal.yanis-harrat.com) |
+| **Stack** | Next.js 16 + React 19 + Tailwind 4 |
+| **Type** | Built (Dockerfile) |
 
 ## 📋 Pages
 
-| Route        | Description                   |
-| ------------ | ----------------------------- |
-| `/`          | Accueil                       |
-| `/privacy`   | Politique de confidentialité  |
-| `/terms`     | Conditions de service         |
-| `/deletion`  | Suppression de données (RGPD) |
-| `/contact`   | Formulaire de contact         |
-| `/complaint` | Réclamation                   |
+| Route | Description |
+|-------|-------------|
+| `/` | Accueil |
+| `/privacy` | Politique de confidentialité |
+| `/terms` | Conditions de service |
+| `/cookies` | Politique des cookies |
+| `/deletion` | Suppression RGPD |
+| `/contact` | Formulaire de contact |
+| `/complaint` | Réclamation |
 
-## 🚀 Développement
+## 🚀 Démarrage
+
+### Développement
 
 ```bash
 cd legal-app
@@ -21,28 +32,41 @@ pnpm install
 pnpm dev
 ```
 
-## 🐳 Docker
+### Production (Docker)
 
 ```bash
 # Configuration
 cp legal-app/.env.example .env
-# Éditer .env avec votre clé Resend
+# Éditer .env
 
 # Build et démarrage
 docker compose up -d --build
 ```
 
-## ⚙️ Variables d'environnement
+## ⚙️ Variables
 
-| Variable         | Description                            |
-| ---------------- | -------------------------------------- |
-| `RESEND_API_KEY` | Clé API Resend                         |
-| `ADMIN_EMAIL`    | Email admin pour notifications         |
-| `FROM_EMAIL`     | Email d'envoi (domaine vérifié Resend) |
+| Variable | Description |
+|----------|-------------|
+| `RESEND_API_KEY` | Clé API Resend |
+| `ADMIN_EMAIL` | Email admin |
+| `FROM_EMAIL` | Email d'envoi |
 
-## 🔧 Stack
+## 🔧 Commandes
 
-- Next.js 16 + React 19
-- Tailwind CSS 4 + shadcn/ui
-- Resend (emails)
-- Docker (node:22-alpine)
+```bash
+# Build
+docker compose build
+
+# Démarrer
+docker compose up -d
+
+# Rebuild
+docker compose up -d --build
+
+# Logs
+docker compose logs -f
+```
+
+## 📚 Documentation
+
+➡️ [Documentation complète](../../docs/services/legal-pages.md)
