@@ -137,15 +137,6 @@ docker compose up -d
 - ✅ Limites de ressources (CPU/RAM)
 - ✅ Secrets via `.env` (non versionnés)
 
-## 🏢 Contexte
-
-**Black Rise** (SIREN: 919 266 668) - Infrastructure pour activités multi-sectorielles :
-- Développement web et logiciel
-- Développement de jeux vidéo
-- Commerce digital
-- Marketing digital
-- Production vidéo
-
 ## 🔗 Liens
 
 | Ressource | URL |
